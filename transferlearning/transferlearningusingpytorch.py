@@ -176,11 +176,12 @@ model = train_model(model, criterion, optimizer, step_lr_scheduler, num_epochs=2
 # we use the technique called finetuning. by finetuning all the weights based on the data
 # We start transfer learning
 
-models_conv = torchvision.models.resnet18(pretrained=True) # optimized and pretrained imagenet net daTA 
-for param in model_conv.parameters():
-    params.requires_grad = False
+model_conv = torchvision.models.resnet18(pretrained=True) # optimized and pretrained imagenet net daTA 
 
-num_ftrs = models_conv.fc.in_features # get input features from the last layer
+for param in model_conv.parameters():
+    param.requires_grad = False
+
+num_ftrs = model_conv.fc.in_features # get input features from the last layer
 # create a new layer and assign it to last layer
 model_conv.fc = nn.Linear(num_ftrs, 2) # outputs 2,we have two classes now the ants and bees classes
 model_conv.to(device) # we set the device at the top
