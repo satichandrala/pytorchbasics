@@ -85,54 +85,54 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs = 25):
             else:
                 model.eval() # set model to evaluation mode
 
-        running_loss = 0.0
-        running_corrects = 0
+            running_loss = 0.0
+            running_corrects = 0
 
-        # iterate over the data via loop, for the inputs and labels
-        for inputs, labels in dataloaders[phase]:
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            # iterate over the data via loop, for the inputs and labels
+            for inputs, labels in dataloaders[phase]:
+                inputs = inputs.to(device)
+                labels = labels.to(device)
 
             # forward loop , 
             # track history only if in training phase
 
-            with torch.set_grad_enabled(phase == 'train'):
-                outputs = model(inputs)
-                _, preds = torch.max(outputs, 1)
-                loss = criterion(outputs, labels)
+                with torch.set_grad_enabled(phase == 'train'):
+                    outputs = model(inputs)
+                    _, preds = torch.max(outputs, 1)
+                    loss = criterion(outputs, labels)
 
                 # backward and optimize only if in training phase
-                if phase == 'train':
-                    optimizer.zero_grad()
-                    loss.backward()
-                    optimizer.step()
+                    if phase == 'train':
+                        optimizer.zero_grad()
+                        loss.backward()
+                        optimizer.step()
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
 
-                if phase == 'train':
-                    scheduler.step()
+            if phase == 'train':
+                scheduler.step()
                 
-                epoch_loss = running_loss / dataset_sizes[phase]
-                epoch_acc = running_corrects.double() / dataset_sizes[phase]
+            epoch_loss = running_loss / dataset_sizes[phase]
+            epoch_acc = running_corrects.double() / dataset_sizes[phase]
 
-                print('{} Loss: {:.4f} Acc: {:.4f}' .format(phase, epoch_loss, epoch_acc))
+            print('{} Loss: {:.4f} Acc: {:.4f}' .format(phase, epoch_loss, epoch_acc))
 
                 # deep copy the model
 
-                if phase == 'val' and epoch_acc > best_acc:
-                    best_acc = epoch_acc
-                    best_model_wts = copy.deepcopy(model.state_dict())
+            if phase == 'val' and epoch_acc > best_acc:
+                best_acc = epoch_acc
+                best_model_wts = copy.deepcopy(model.state_dict())
     
-            print()
+        print()
         
-        time_elapsed = time.time() - since
-        print('Training complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
-        print(f'Best val Acc {best_acc:4f}')
+    time_elapsed = time.time() - since
+    print('Training complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
+    print(f'Best val Acc {best_acc:4f}')
 
         # load best model weights
-        model.load_state_dict(best_model_wts)
-        return model
+    model.load_state_dict(best_model_wts)
+    return model
 ####
 # we use the technique called finetuning. by finetuning all the weights based on the data
 # We start transfer learning 
@@ -205,3 +205,168 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size =7, gamma=0.1) 
 model_conv = train_model(model_conv, criterion, optimizer_conv, exp_lr_scheduler, num_epochs=25)
 
 
+# Output
+# Epoch 0/19
+# ----------
+# val Loss: 0.0191 Acc: 0.0131
+
+# val Loss: 0.0372 Acc: 0.0261
+
+# val Loss: 0.0548 Acc: 0.0392
+
+# val Loss: 0.0801 Acc: 0.0458
+
+# val Loss: 0.1022 Acc: 0.0588
+
+# val Loss: 0.1168 Acc: 0.0784
+
+# val Loss: 0.1386 Acc: 0.0915
+
+# val Loss: 0.1604 Acc: 0.1046
+
+# val Loss: 0.1794 Acc: 0.1111
+
+# val Loss: 0.1880 Acc: 0.1373
+
+# val Loss: 0.2026 Acc: 0.1569
+
+# val Loss: 0.2089 Acc: 0.1830
+
+# val Loss: 0.2364 Acc: 0.1830
+
+# val Loss: 0.2517 Acc: 0.1961
+
+# val Loss: 0.2650 Acc: 0.2222
+
+# val Loss: 0.2815 Acc: 0.2353
+
+# val Loss: 0.2979 Acc: 0.2484
+
+# val Loss: 0.3104 Acc: 0.2745
+
+# val Loss: 0.3232 Acc: 0.2941
+
+# val Loss: 0.3372 Acc: 0.3137
+
+# val Loss: 0.3513 Acc: 0.3333
+
+# val Loss: 0.3675 Acc: 0.3529
+
+# val Loss: 0.3802 Acc: 0.3725
+
+# val Loss: 0.4026 Acc: 0.3791
+
+# val Loss: 0.4162 Acc: 0.4052
+
+# val Loss: 0.4292 Acc: 0.4248
+
+# val Loss: 0.4436 Acc: 0.4444
+
+# val Loss: 0.4583 Acc: 0.4641
+
+# val Loss: 0.4751 Acc: 0.4771
+
+# val Loss: 0.4916 Acc: 0.4902
+
+# val Loss: 0.5029 Acc: 0.5098
+
+# val Loss: 0.5167 Acc: 0.5294
+
+# val Loss: 0.5352 Acc: 0.5425
+
+# val Loss: 0.5515 Acc: 0.5556
+
+# val Loss: 0.5723 Acc: 0.5621
+
+# val Loss: 0.5843 Acc: 0.5882
+
+# val Loss: 0.5952 Acc: 0.6144
+
+# val Loss: 0.6086 Acc: 0.6405
+
+# val Loss: 0.6145 Acc: 0.6405
+
+# Training complete in 0m 14s
+# Best val Acc 0.640523
+# Epoch 0/24
+# ----------
+# val Loss: 0.0164 Acc: 0.0196
+
+# val Loss: 0.0389 Acc: 0.0196
+
+# val Loss: 0.0626 Acc: 0.0327
+
+# val Loss: 0.0840 Acc: 0.0458
+
+# val Loss: 0.1070 Acc: 0.0523
+
+# val Loss: 0.1367 Acc: 0.0588
+
+# val Loss: 0.1589 Acc: 0.0719
+
+# val Loss: 0.1840 Acc: 0.0784
+
+# val Loss: 0.2150 Acc: 0.0784
+
+# val Loss: 0.2432 Acc: 0.0915
+
+# val Loss: 0.2566 Acc: 0.1111
+
+# val Loss: 0.2732 Acc: 0.1307
+
+# val Loss: 0.2844 Acc: 0.1503
+
+# val Loss: 0.2994 Acc: 0.1699
+
+# val Loss: 0.3208 Acc: 0.1830
+
+# val Loss: 0.3427 Acc: 0.2026
+
+# val Loss: 0.3628 Acc: 0.2092
+
+# val Loss: 0.3898 Acc: 0.2222
+
+# val Loss: 0.4161 Acc: 0.2353
+
+# val Loss: 0.4352 Acc: 0.2484
+
+# val Loss: 0.4581 Acc: 0.2614
+
+# val Loss: 0.4794 Acc: 0.2745
+
+# val Loss: 0.5023 Acc: 0.2810
+
+# val Loss: 0.5200 Acc: 0.2941
+
+# val Loss: 0.5375 Acc: 0.3072
+
+# val Loss: 0.5548 Acc: 0.3268
+
+# val Loss: 0.5754 Acc: 0.3399
+
+# val Loss: 0.5948 Acc: 0.3464
+
+# val Loss: 0.6066 Acc: 0.3725
+
+# val Loss: 0.6222 Acc: 0.3922
+
+# val Loss: 0.6478 Acc: 0.4052
+
+# val Loss: 0.6702 Acc: 0.4183
+
+# val Loss: 0.6886 Acc: 0.4314
+
+# val Loss: 0.7080 Acc: 0.4379
+
+# val Loss: 0.7282 Acc: 0.4510
+
+# val Loss: 0.7450 Acc: 0.4706
+
+# val Loss: 0.7648 Acc: 0.4902
+
+# val Loss: 0.7876 Acc: 0.4967
+
+# val Loss: 0.7920 Acc: 0.5033
+
+# Training complete in 0m 15s
+# Best val Acc 0.503268
