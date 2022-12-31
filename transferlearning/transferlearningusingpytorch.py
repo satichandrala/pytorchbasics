@@ -98,3 +98,32 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs = 25):
                     best_acc = epoch_acc
                     best_model_wts = copy.deepcopy(model.state_dict())
     
+            print()
+        
+        time_elapsed = time.time() - since
+        print(f'Training complete in {time_elapsed//60:.0f}m {time_elapsed%60:.0f}s')
+        print(f'Best val Acc: {:4f}'.format(best_acc))
+
+        # load best model weights
+        model.load_state_dict(best_model_wts)
+        return model
+
+model = models.resnet18(pretrained=True) # optimized and pretrained imagenet net daTA 
+num_ftrs = models.fc.in_features # get input features from the last layer
+# create a new layer and assign it to last layer
+model.fc = nn.Linear(num_ftrs, 2) # outputs 2,we have two classes now the ants and bees classes
+model.to(device) # we set the device at the top
+
+# define loss and optimizer for the new model
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr = 0.001)
+
+# scheduler - will update the learning rate
+
+step_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size =7, gamma=0.1) # every 7 epochs will be multiplied by gamma
+# loop ove the epochs
+for epoch in range(100):
+    train() # optimizer.step
+    evaluate()
+
+
