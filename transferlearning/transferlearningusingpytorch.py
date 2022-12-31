@@ -81,3 +81,4 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs = 25):
                     loss.backward()
                     optimizer.step()
             # 
+            
