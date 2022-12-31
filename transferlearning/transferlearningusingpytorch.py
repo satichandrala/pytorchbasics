@@ -139,9 +139,10 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs = 25):
 # #### Finetuning the convnet ####
 # Load a pretrained model and reset final fully connected layer.
 
-model = models.resnet18(weights=True) # optimized and pretrained imagenet net daTA 
+model = models.resnet18(pretrained=True) # optimized and pretrained imagenet net daTA 
 # for param in model.parameters():
 #     params.requires_grad = False
+
 num_ftrs = model.fc.in_features
  # get input features from the last layer
 # Here the size of each output sample is set to 2.
@@ -170,12 +171,12 @@ step_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1) # eve
 # Here, we need to freeze all the network except the final layer.
 # We need to set requires_grad == False to freeze the parameters so that the gradients are not computed in backward()
 
-model_conv = train_model(model, criterion, optimizer, scheduler, num_epochs=20)
+model = train_model(model, criterion, optimizer, step_lr_scheduler, num_epochs=20)
 
 # we use the technique called finetuning. by finetuning all the weights based on the data
 # We start transfer learning
 
-model = torchvision.models.resnet18(weights=True) # optimized and pretrained imagenet net daTA 
+models_conv = torchvision.models.resnet18(pretrained=True) # optimized and pretrained imagenet net daTA 
 for param in model_conv.parameters():
     params.requires_grad = False
 
