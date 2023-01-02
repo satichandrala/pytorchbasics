@@ -1,4 +1,4 @@
-# save model on CPU and Load on GPU
+# save model on GPU and Load on CPU
 device = torch.device("cuda")
 model.to(device)
 torch.save(model.state_dict(), PATH)
