@@ -17,6 +17,7 @@ import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
+import torch.nn.functional as F
 from torch.utils.tensorboard import SummaryWriter
 writer = SummaryWriter("runs/mnist2") # updated learning rate to 0.01 and so renamed the folder to see different results on this
 # device config 
@@ -127,6 +128,9 @@ for epoch in range(num_epochs):
             writer.add_scalar('accuracy', running_correct/100, epoch*n_total_steps + i)
             running_loss = 0.0
             running_correct = 0
+# for precision recall curve
+labels = []
+preds = []
 # we will show mean loss in tensor board
             # now done with the training loop
 # we make a test loop and evaluation 
@@ -136,17 +140,30 @@ for epoch in range(num_epochs):
 with torch.no_grad():
     n_correct   = 0 # initialization
     n_samples   = 0
-    for images, labels in test_loader:
+    for images, labels1 in test_loader:
         images = images.reshape(-1, 28*28).to(device)
-        labels = labels.to(device)
+        labels1 = labels1.to(device)
         outputs = model(images)
 
 # returns the value, index
-        _, predictions = torch.max(outputs, 1) # dimension is 1, _ is class label no not needed any value b/c we're interested in index
-        n_samples += labels.shape[0] # number of samples in current batch
-        n_correct += (predictions == labels).sum().item() # += adding one each time
+        _, predictions = torch.max(outputs.data, 1) # dimension is 1, _ is class label no not needed any value b/c we're interested in index
+        n_samples += labels1.size(0) # number of samples in current batch
+        n_correct += (predicted == labels1).sum().item() # += adding one each time
+        # for batch evaluation
+        class_predictions = [F.softmax(output, dim=0) for output in outputs]
+        preds.append(class_predictions)
+        labels.append(predicted)
+# we calculate softmax explicitly for outputs
+    preds = torch.cat([torch.stack(batch) for batch in preds])
+    labels = torch.cat(labels) # concatenate all the labels into a 1d tensor
+
 
     acc = 100.0 * n_correct/ n_samples
     print(f'accuracy = {acc}')
 
-
+    classes = range(10)
+    for i in classes:
+        labels_i = labels == i
+        preds_i = preds[:, i]
+        writer.add_pr_curve(str(i), labels_i, preds_i, global_step=0)
+        writer.close()
