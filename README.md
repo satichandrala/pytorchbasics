@@ -40,3 +40,14 @@ To use the code in this repository, follow these steps:
 
 1. Clone the repository:
 
+git clone https://github.com/satichandrala/pytorchbasics.git
+
+
+2. Install the required packages:
+
+pip install -r requirements.txt
+
+
+## License
+
+This repository is licensed under the [MIT License](LICENSE).
